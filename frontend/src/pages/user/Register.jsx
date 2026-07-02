@@ -1,183 +1,102 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTheme } from "../../context/ThemContext";
+import { useState } from "react";
 import axios from "axios";
-import "./profile.css";
-import logo from "../../assets/foodie cape logo.png";
+import { Link, useNavigate } from "react-router-dom";
 
-const ThemeToggle = () => {
-  const { darkMode, toggleTheme } = useTheme();
-
-  return (
-    <div className="theme-switch-wrapper">
-      <label className="theme-switch">
-        <input type="checkbox" onChange={toggleTheme} checked={darkMode} />
-        <div className="slider round">
-          <span className="icon">{darkMode ? "🌙" : "☀️"}</span>
-        </div>
-      </label>
-    </div>
-  );
-};
-
-function Profile() {
+function Register() {
   const navigate = useNavigate();
-  const { darkMode } = useTheme();
-  const fileInputRef = useRef(null);
 
-  // ✅ FIXED: ENV BASED BACKEND URL
-  const backendURL = process.env.REACT_APP_API_URL;
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [orders, setOrders] = useState([]);
+  const backendURL = "https://foodie-cape.onrender.com";
 
   const [user, setUser] = useState({
-    name: "Praveen",
-    email: "praveen744600@gmail.com",
-    phone: "+91 8870593766",
-    address: "South Poigai Nallur, Nagapattinam",
-    profilePic: logo,
+    name: "",
+    email: "",
+    password: "",
   });
 
-  useEffect(() => {
-    // OPTIONAL PROFILE API
-    // axios.get(`${backendURL}/api/auth/profile`, {
-    //   headers: {
-    //     Authorization: `Bearer ${localStorage.getItem("token")}`
-    //   }
-    // }).then(res => setUser(res.data));
-
-    // ORDERS API
-    axios
-      .get(`${backendURL}/api/orders/my`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => setOrders(res.data))
-      .catch((err) => console.log(err));
-  }, [backendURL]);
-
-  const handleUpdate = () => {
-    setIsEditing(false);
-    alert("Profile Updated Successfully!");
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setUser((prev) => ({ ...prev, profilePic: imageUrl }));
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(`${backendURL}/api/auth/register`, user);
+
+      alert("Registration Successful ✅");
+
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+
+      alert(
+        err.response?.data?.error ||
+          err.response?.data ||
+          "Registration Failed ❌"
+      );
     }
   };
 
   return (
-    <div className={`profile-wrapper ${darkMode ? "dark" : ""}`}>
+    <div className="container mt-5" style={{ maxWidth: "450px" }}>
+      <div className="card shadow p-4">
 
-      {/* NAVBAR */}
-      <nav className="custom-navbar">
+        <h2 className="text-center mb-4">
+          Register 🍔
+        </h2>
 
-        <div className="nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Foodie Cape" className="brand-logo" />
-          <span className="brand-name">
-            <span>FoodieCape</span>
-          </span>
-        </div>
+        <form onSubmit={handleRegister}>
 
-        <div className="nav-right">
-          <ThemeToggle />
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            className="form-control mb-3"
+            value={user.name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="form-control mb-3"
+            value={user.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="form-control mb-3"
+            value={user.password}
+            onChange={handleChange}
+            required
+          />
+
           <button
-            className="back-btn-modern"
-            onClick={() => navigate("/user/productList")}
+            type="submit"
+            className="btn btn-success w-100"
           >
-            Back to Menu
+            Register
           </button>
-        </div>
 
-      </nav>
+        </form>
 
-      {/* BODY */}
-      <div className="profile-container">
-        <div className="profile-grid">
+        <p className="text-center mt-3">
+          Already have an account?{" "}
+          <Link to="/login">Login</Link>
+        </p>
 
-          {/* LEFT */}
-          <div className="profile-card-left">
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-
-            <div
-              className="profile-pic-wrapper"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <img src={user.profilePic} alt="Profile" className="profile-avatar" />
-              <div className="camera-overlay">📸</div>
-            </div>
-
-            <h2>{user.name}</h2>
-            <p>Food Lover 🍔</p>
-
-            {isEditing ? (
-              <div>
-                <input
-                  value={user.name}
-                  onChange={(e) => setUser({ ...user, name: e.target.value })}
-                />
-                <input
-                  value={user.phone}
-                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
-                />
-                <textarea
-                  value={user.address}
-                  onChange={(e) => setUser({ ...user, address: e.target.value })}
-                />
-
-                <button onClick={handleUpdate}>Save</button>
-              </div>
-            ) : (
-              <div>
-                <p>📧 {user.email}</p>
-                <p>📞 {user.phone}</p>
-                <p>📍 {user.address}</p>
-
-                <button onClick={() => setIsEditing(true)}>
-                  Edit Profile
-                </button>
-              </div>
-            )}
-
-          </div>
-
-          {/* RIGHT - ORDERS */}
-          <div className="profile-card-right">
-
-            <h3>My Orders</h3>
-
-            {orders.length === 0 ? (
-              <p>No orders yet</p>
-            ) : (
-              orders.map((order) => (
-                <div key={order._id} className="order-card">
-                  <h4>Order #{order._id.slice(-4)}</h4>
-                  <p>Total: ₹{order.totalAmount}</p>
-                  <span style={{ color: "green" }}>
-                    {order.status}
-                  </span>
-                </div>
-              ))
-            )}
-
-          </div>
-
-        </div>
       </div>
     </div>
   );
 }
 
-export default Profile;
+export default Register;
