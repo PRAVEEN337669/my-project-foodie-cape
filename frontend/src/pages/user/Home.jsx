@@ -1,4 +1,4 @@
- import React from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./home.css";
 import logo from "../../assets/foodie cape logo.png"; // Your logo path

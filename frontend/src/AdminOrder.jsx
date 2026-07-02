@@ -4,38 +4,48 @@ import axios from "axios";
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
 
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
+
   // fetch all orders
   useEffect(() => {
-    axios.get("https://foodie-cape.onrender.com/api/orders/all", {
-      headers: {
-        Authorization: localStorage.getItem("token")
-      }
-    })
-    .then(res => setOrders(res.data));
+    axios
+      .get(`${backendURL}/api/orders/all`, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+      .then((res) => setOrders(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   // update status
   const updateStatus = async (id, status) => {
-    await axios.put(
-      `https://foodie-cape.onrender.com/api/orders/update/${id}`,
-      { status },
-      {
-        headers: {
-          Authorization: localStorage.getItem("token")
+    try {
+      await axios.put(
+        `${backendURL}/api/orders/update/${id}`,
+        { status },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
         }
-      }
-    );
+      );
 
-    alert("Status Updated");
+      alert("Status Updated");
+      window.location.reload();
 
-    window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status");
+    }
   };
 
   return (
     <div className="container mt-4">
       <h2>Admin Orders Panel 👨‍💻</h2>
 
-      {orders.map(order => (
+      {orders.map((order) => (
         <div key={order._id} className="card p-3 my-3">
 
           <h5>User: {order.user?.email}</h5>

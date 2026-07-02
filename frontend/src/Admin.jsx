@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 
 function Admin() {
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
+
   const [food, setFood] = useState({
     name: "",
     price: "",
@@ -11,14 +14,14 @@ function Admin() {
   const handleSubmit = async () => {
     try {
       await axios.post(
-  "https://foodie-cape.onrender.com/api/food/add",
-  food,
-  {
-    headers: {
-      Authorization: localStorage.getItem("token")
-    }
-  }
-);
+        `${backendURL}/api/food/add`,
+        food,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        }
+      );
 
       alert("Food Added ✅");
 
@@ -57,4 +60,3 @@ function Admin() {
 }
 
 export default Admin;
-

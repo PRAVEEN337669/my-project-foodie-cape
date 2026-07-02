@@ -4,13 +4,18 @@ import axios from "axios";
 function MyOrders() {
   const [orders, setOrders] = useState([]);
 
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    axios.get("https://foodie-cape.onrender.com/api/orders/my", {
-      headers: {
-        Authorization: localStorage.getItem("token")
-      }
-    })
-    .then(res => setOrders(res.data));
+    axios
+      .get(`${backendURL}/api/orders/my`, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+      .then((res) => setOrders(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
@@ -20,7 +25,7 @@ function MyOrders() {
       {orders.length === 0 ? (
         <p>No orders yet</p>
       ) : (
-        orders.map(order => (
+        orders.map((order) => (
           <div key={order._id} className="card p-3 my-2">
             <h5>Total: ₹{order.totalAmount}</h5>
             <p>Status: {order.status}</p>

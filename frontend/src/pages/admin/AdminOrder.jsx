@@ -4,7 +4,8 @@ import axios from "axios";
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const getOrders = async () => {
     try {
@@ -12,8 +13,8 @@ function AdminOrders() {
         `${backendURL}/api/orders/all`,
         {
           headers: {
-            Authorization: localStorage.getItem("token")
-          }
+            Authorization: localStorage.getItem("token"),
+          },
         }
       );
 
@@ -34,8 +35,8 @@ function AdminOrders() {
         { status },
         {
           headers: {
-            Authorization: localStorage.getItem("token")
-          }
+            Authorization: localStorage.getItem("token"),
+          },
         }
       );
 

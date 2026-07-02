@@ -13,9 +13,10 @@ function ProductList() {
   const [userRatings, setUserRatings] = useState({});
   const [flyingItem, setFlyingItem] = useState(null);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
-  // FETCH PRODUCTS (FIXED)
+  // FETCH PRODUCTS
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -62,7 +63,9 @@ function ProductList() {
       <nav className="custom-navbar">
         <div className="nav-logo">
           <img src={logo} alt="Foodie Cape" className="brand-logo" />
-          <span className="brand-name">Foodie <span>Cape</span></span>
+          <span className="brand-name">
+            Foodie <span>Cape</span>
+          </span>
         </div>
 
         <div className="search-box">
@@ -76,14 +79,21 @@ function ProductList() {
 
         <div className="nav-links">
 
-          <span className="link-item" onClick={() => navigate("/")}>
+          <span
+            className="link-item"
+            onClick={() => navigate("/")}
+          >
             Home
           </span>
 
           <div
             className="profile-nav-item"
             onClick={() => navigate("/profile")}
-            style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+            style={{
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center"
+            }}
           >
             <div
               className="user-profile-circle"
@@ -114,10 +124,11 @@ function ProductList() {
         </div>
       </nav>
 
-      {/* FLY ANIMATION */}
+      {/* Fly Animation */}
       {flyingItem && (
         <img
           src={flyingItem.image}
+          alt="Flying Food"
           style={{
             position: "fixed",
             zIndex: 1000,
@@ -128,14 +139,15 @@ function ProductList() {
             top: flyingItem.top,
             left: flyingItem.left
           }}
-          alt="flying"
         />
       )}
 
       {/* CONTENT */}
       <div className="content-container">
 
-        <h2 className="menu-header">𝕆𝕦𝕣 𝔻𝕖𝕝𝕚𝕔𝕚𝕠𝕦𝕤 𝕄𝕖𝕟𝕦</h2>
+        <h2 className="menu-header">
+          𝕆𝕦𝕣 𝔻𝕖𝕝𝕚𝕔𝕚𝕠𝕦𝕤 𝕄𝕖𝕟𝕦
+        </h2>
 
         <div className="product-grid">
           {filteredProducts.map((p) => (
@@ -156,7 +168,6 @@ function ProductList() {
 
                 <h5 className="item-title">{p.name}</h5>
 
-                {/* STAR RATING */}
                 <div className="star-rating">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <span
@@ -176,7 +187,9 @@ function ProductList() {
                 </div>
 
                 <div className="card-footer">
-                  <span className="item-price">₹{p.price}</span>
+                  <span className="item-price">
+                    ₹{p.price}
+                  </span>
 
                   <button
                     className="green-add-btn"
@@ -193,6 +206,7 @@ function ProductList() {
         </div>
 
       </div>
+
     </div>
   );
 }

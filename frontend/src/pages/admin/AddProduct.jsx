@@ -6,13 +6,14 @@ import "../admin/food.css";
 function AddProduct() {
   const navigate = useNavigate();
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const [product, setProduct] = useState({
     name: "",
     price: "",
     description: "",
-    image: ""
+    image: "",
   });
 
   const handleSubmit = async (e) => {

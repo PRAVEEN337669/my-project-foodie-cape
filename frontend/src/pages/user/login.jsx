@@ -10,7 +10,8 @@ function Cart() {
     total
   } = useContext(CartContext);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const handleCheckout = () => {
     if (cart.length > 0) {
@@ -22,7 +23,7 @@ function Cart() {
 
   return (
     <div style={{ maxWidth: "900px", margin: "50px auto", padding: "0 20px" }}>
-      
+
       <h2>Your Shopping Cart 🛒</h2>
 
       {cart.length === 0 ? (
@@ -46,10 +47,9 @@ function Cart() {
                 backgroundColor: "#fff"
               }}
             >
-              
-              {/* IMAGE + INFO */}
+
               <div style={{ display: "flex", alignItems: "center" }}>
-                
+
                 <img
                   src={
                     item.image
@@ -74,7 +74,6 @@ function Cart() {
                 </div>
               </div>
 
-              {/* QTY CONTROL */}
               <div style={{ display: "flex", alignItems: "center" }}>
                 <button
                   onClick={() => decreaseQty(item._id)}
@@ -109,7 +108,6 @@ function Cart() {
                 </button>
               </div>
 
-              {/* REMOVE */}
               <button
                 onClick={() => removeFromCart(item._id)}
                 style={{
@@ -126,12 +124,10 @@ function Cart() {
             </div>
           ))}
 
-          {/* TOTAL */}
           <div style={{ marginTop: "30px" }}>
             <h3>Total: ₹{total}</h3>
           </div>
 
-          {/* CHECKOUT */}
           <button
             onClick={handleCheckout}
             style={{

@@ -25,7 +25,8 @@ function Profile() {
   const { darkMode } = useTheme();
   const fileInputRef = useRef(null);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ FIXED: ENV BASED BACKEND URL
+  const backendURL = process.env.REACT_APP_API_URL;
 
   const [isEditing, setIsEditing] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -35,25 +36,27 @@ function Profile() {
     email: "praveen744600@gmail.com",
     phone: "+91 8870593766",
     address: "South Poigai Nallur, Nagapattinam",
-    profilePic: logo
+    profilePic: logo,
   });
 
-  // OPTIONAL: fetch real user profile
   useEffect(() => {
+    // OPTIONAL PROFILE API
     // axios.get(`${backendURL}/api/auth/profile`, {
-    //   headers: { Authorization: localStorage.getItem("token") }
+    //   headers: {
+    //     Authorization: `Bearer ${localStorage.getItem("token")}`
+    //   }
     // }).then(res => setUser(res.data));
 
-    // fetch orders (REAL READY)
+    // ORDERS API
     axios
       .get(`${backendURL}/api/orders/my`, {
         headers: {
-          Authorization: localStorage.getItem("token")
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       })
-      .then(res => setOrders(res.data))
-      .catch(err => console.log(err));
-  }, []);
+      .then((res) => setOrders(res.data))
+      .catch((err) => console.log(err));
+  }, [backendURL]);
 
   const handleUpdate = () => {
     setIsEditing(false);
@@ -64,7 +67,7 @@ function Profile() {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setUser({ ...user, profilePic: imageUrl });
+      setUser((prev) => ({ ...prev, profilePic: imageUrl }));
     }
   };
 
@@ -77,7 +80,7 @@ function Profile() {
         <div className="nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           <img src={logo} alt="Foodie Cape" className="brand-logo" />
           <span className="brand-name">
-             <span>FoodieCape</span>
+            <span>FoodieCape</span>
           </span>
         </div>
 

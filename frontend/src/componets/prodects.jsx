@@ -9,25 +9,28 @@ function Products() {
 
   const { addToCart } = useContext(CartContext);
 
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
+
   // fetch foods (LIVE BACKEND)
   useEffect(() => {
-    axios.get("https://foodie-cape.onrender.com/api/food")
-      .then(res => setFoods(res.data))
-      .catch(err => console.log(err));
+    axios
+      .get(`${backendURL}/api/food`)
+      .then((res) => setFoods(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
   // filter foods
-  const filteredFoods = foods.filter(f =>
-    f.name.toLowerCase().includes(search.toLowerCase()) &&
-    (maxPrice === "" || f.price <= maxPrice)
+  const filteredFoods = foods.filter(
+    (f) =>
+      f.name.toLowerCase().includes(search.toLowerCase()) &&
+      (maxPrice === "" || f.price <= maxPrice)
   );
 
   return (
     <div className="container mt-4">
-
       <h2 className="mb-3">Food Products 🍔</h2>
 
-      {/* 🔍 Search */}
       <input
         type="text"
         placeholder="Search food..."
@@ -35,7 +38,6 @@ function Products() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* 💰 Price Filter */}
       <input
         type="number"
         placeholder="Max Price"
@@ -43,17 +45,13 @@ function Products() {
         onChange={(e) => setMaxPrice(e.target.value)}
       />
 
-      {/* 🧾 Products */}
       <div className="row">
         {filteredFoods.length === 0 ? (
           <p>No items found</p>
         ) : (
-          filteredFoods.map(f => (
+          filteredFoods.map((f) => (
             <div key={f._id} className="col-md-4">
-
               <div className="card shadow-sm mb-4">
-
-                {/* 🖼 Image */}
                 <img
                   src={f.image || "https://via.placeholder.com/300"}
                   alt={f.name}
@@ -73,14 +71,11 @@ function Products() {
                     Add to Cart 🛒
                   </button>
                 </div>
-
               </div>
-
             </div>
           ))
         )}
       </div>
-
     </div>
   );
 }

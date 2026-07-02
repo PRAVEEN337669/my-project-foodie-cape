@@ -4,7 +4,8 @@ import axios from "axios";
 function ManageProducts() {
   const [products, setProducts] = useState([]);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const getProducts = async () => {
     try {
@@ -23,13 +24,12 @@ function ManageProducts() {
     try {
       await axios.delete(`${backendURL}/api/food/${id}`, {
         headers: {
-          Authorization: localStorage.getItem("token")
-        }
+          Authorization: localStorage.getItem("token"),
+        },
       });
 
       alert("Deleted ✅");
       getProducts();
-
     } catch (err) {
       console.error("Delete failed:", err);
       alert("Failed to delete ❌");

@@ -18,7 +18,8 @@ function Cart() {
     }
   };
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const cardStyle = {
     display: "flex",
@@ -73,7 +74,7 @@ function Cart() {
         <>
           {cart.map(item => (
             <div key={item._id} style={cardStyle}>
-              
+
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
                   src={
@@ -92,9 +93,21 @@ function Cart() {
               </div>
 
               <div style={{ display: "flex", alignItems: "center" }}>
-                <button onClick={() => decreaseQty(item._id)} style={qtyBtnStyle}>−</button>
+                <button
+                  onClick={() => decreaseQty(item._id)}
+                  style={qtyBtnStyle}
+                >
+                  −
+                </button>
+
                 <span>{item.quantity}</span>
-                <button onClick={() => addToCart(item)} style={qtyBtnStyle}>+</button>
+
+                <button
+                  onClick={() => addToCart(item)}
+                  style={qtyBtnStyle}
+                >
+                  +
+                </button>
               </div>
 
               <button

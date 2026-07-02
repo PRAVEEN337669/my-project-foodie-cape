@@ -27,7 +27,8 @@ function Profile() {
 
   const fileInputRef = useRef(null);
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  // ✅ Backend URL from .env
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const [user, setUser] = useState({
     name: "Praveen",
@@ -37,7 +38,6 @@ function Profile() {
     profilePic: logo
   });
 
-  // OPTIONAL: fetch real user profile (if backend exists)
   useEffect(() => {
     // axios.get(`${backendURL}/api/auth/profile`, {
     //   headers: { Authorization: localStorage.getItem("token") }
@@ -60,18 +60,22 @@ function Profile() {
   return (
     <div className={`profile-wrapper ${darkMode ? "dark" : ""}`}>
 
-      {/* NAVBAR */}
       <nav className="custom-navbar">
 
-        <div className="nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+        <div
+          className="nav-logo"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
           <img src={logo} alt="Foodie Cape" className="brand-logo" />
           <span className="brand-name">
-              <span>Foodie Cape</span>
+            <span>Foodie Cape</span>
           </span>
         </div>
 
         <div className="nav-right">
           <ThemeToggle />
+
           <button
             className="back-btn-modern"
             onClick={() => navigate("/user/productList")}
@@ -82,11 +86,9 @@ function Profile() {
 
       </nav>
 
-      {/* PROFILE BODY */}
       <div className="profile-container">
         <div className="profile-grid">
 
-          {/* LEFT */}
           <div className="profile-card-left">
 
             <input
@@ -101,7 +103,12 @@ function Profile() {
               className="profile-pic-wrapper"
               onClick={() => fileInputRef.current.click()}
             >
-              <img src={user.profilePic} alt="Profile" className="profile-avatar" />
+              <img
+                src={user.profilePic}
+                alt="Profile"
+                className="profile-avatar"
+              />
+
               <div className="camera-overlay">
                 <span>📸</span>
               </div>
@@ -110,26 +117,38 @@ function Profile() {
             <h2>{user.name}</h2>
             <p>Full Stack Developer</p>
 
-            {/* INFO */}
             {isEditing ? (
               <div>
+
                 <input
                   value={user.name}
-                  onChange={(e) => setUser({ ...user, name: e.target.value })}
-                />
-                <input
-                  value={user.phone}
-                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
-                />
-                <textarea
-                  value={user.address}
-                  onChange={(e) => setUser({ ...user, address: e.target.value })}
+                  onChange={(e) =>
+                    setUser({ ...user, name: e.target.value })
+                  }
                 />
 
-                <button onClick={handleUpdate}>Save</button>
+                <input
+                  value={user.phone}
+                  onChange={(e) =>
+                    setUser({ ...user, phone: e.target.value })
+                  }
+                />
+
+                <textarea
+                  value={user.address}
+                  onChange={(e) =>
+                    setUser({ ...user, address: e.target.value })
+                  }
+                />
+
+                <button onClick={handleUpdate}>
+                  Save
+                </button>
+
               </div>
             ) : (
               <div>
+
                 <p>📧 {user.email}</p>
                 <p>📞 {user.phone}</p>
                 <p>📍 {user.address}</p>
@@ -137,12 +156,12 @@ function Profile() {
                 <button onClick={() => setIsEditing(true)}>
                   Edit Profile
                 </button>
+
               </div>
             )}
 
           </div>
 
-          {/* RIGHT - ORDERS */}
           <div className="profile-card-right">
 
             <h3>My Orders</h3>
@@ -150,10 +169,14 @@ function Profile() {
             <div>
               {[1, 2].map((id) => (
                 <div key={id} className="order-card">
+
                   <h4>Order #{id}</h4>
                   <p>Food Order</p>
                   <span>₹220</span>
-                  <span style={{ color: "green" }}>Delivered</span>
+                  <span style={{ color: "green" }}>
+                    Delivered
+                  </span>
+
                 </div>
               ))}
             </div>
