@@ -1,0 +1,308 @@
+.profile-wrapper { 
+  background: #f8f9fa; 
+  min-height: 100vh; 
+  font-family: 'Poppins', sans-serif; 
+}
+
+.profile-main { 
+  display: flex; 
+  gap: 30px; 
+  padding: 40px 10%; 
+}
+
+.user-info-card { 
+  flex: 1; 
+  background: white; 
+  padding: 30px; 
+  border-radius: 15px; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+  text-align: center; 
+}
+
+.user-avatar { 
+  width: 80px; 
+  height: 80px; 
+  background: #27ae60; 
+  color: white; 
+  font-size: 30px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  border-radius: 50%; 
+  margin: 0 auto 15px; 
+}
+
+.user-orders-list { 
+  flex: 2; 
+}
+
+.order-item-card { 
+  background: white; 
+  padding: 20px; 
+  border-radius: 12px; 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.status-badge { 
+  padding: 4px 10px; 
+  border-radius: 20px; 
+  font-size: 12px; 
+  font-weight: bold; 
+}
+
+.delivered { 
+  background: #e8f5e9; 
+  color: #2e7d32; 
+}
+
+.processing { 
+  background: #fff3e0; 
+  color: #ef6c00; 
+}
+
+.edit-profile-button { 
+  margin-top: 20px; 
+  width: 100%; 
+  padding: 10px; 
+  border: 1px solid #27ae60; 
+  background: none; 
+  color: #27ae60; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  font-weight: bold;
+}
+
+.edit-profile-button:hover { 
+  background: #27ae60; 
+  color: white; 
+}
+
+.profile-container { 
+  padding: 40px 8%; 
+  background-color: #f0f2f5; 
+  min-height: 90vh; 
+}
+
+.profile-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1.5fr; 
+  gap: 30px; 
+}
+
+.profile-card-left, .profile-card-right { 
+  background: #ffffff; 
+  border-radius: 20px; 
+  padding: 30px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+}
+
+.info-row { 
+  margin-bottom: 15px; 
+  padding: 12px; 
+  background: #f8f9fa; 
+  border-radius: 10px; 
+  color: #555; 
+}
+
+.edit-trigger-btn {
+  width: 100%; 
+  padding: 12px; 
+  background: #27ae60; 
+  color: #fff; 
+  border: none;
+  border-radius: 10px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  transition: 0.3s;
+}
+
+.edit-form input, .edit-form textarea {
+  width: 100%; 
+  padding: 10px; 
+  margin-bottom: 10px; 
+  border: 1px solid #ddd; 
+  border-radius: 8px;
+}
+
+.save-btn { 
+  background: #2ecc71; 
+  color: white; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+}
+
+.modern-order-card {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 15px; 
+  border-bottom: 1px solid #eee; 
+  transition: 0.2s;
+}
+
+.modern-order-card:hover { 
+  background: #f9f9f9; 
+}
+
+/* Theme Switcher Styles */
+.theme-switch input {
+  display: none !important;
+}
+
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 28px;
+  position: relative;
+  width: 50px;
+}
+
+.slider {
+  background-color: #ccc;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  background-color: white;
+  bottom: 3px;
+  content: "";
+  height: 22px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 22px;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: #27ae60; 
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.icon {
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  font-size: 12px;
+  transition: .4s;
+}
+
+input:checked + .slider .icon {
+  right: 28px;
+}
+
+/* Dark Mode Styles */
+.profile-wrapper.dark {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+.dark .profile-card-left, 
+.dark .profile-card-right,
+.dark .modern-order-card {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.dark .info-row, .dark .user-subtitle {
+  background-color: #2c2c2c;
+  color: #ddd;
+}
+
+.dark .brand-name {
+  color: #ffffff;
+}
+
+.dark .section-title {
+  color: #2ecc71;
+}
+
+ /* ===================================================
+   MODERN PROFILE PICTURE & EXTERNAL CAMERA ICON
+   =================================================== */
+
+/* Center alignment for the profile layout */
+.profile-container-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;       /* Ensures it takes full width to center properly */
+  margin: 0 auto 25px auto; /* Centers the container itself */
+}
+
+/* Wrapper container holding both the circular image and floating camera button */
+.profile-pic-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  display: block;    
+  margin: 0 auto;    /* Forces the wrapper to stay perfectly dead center */
+}
+
+/* Perfectly circular profile image without external borders */
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: contain;     /* Change from cover to contain so the full logo is visible */
+  object-position: center; /* This forces the logo to stay exactly in the center of the circle */
+  background-color: transparent; /* Removes any unwanted white backgrounds */
+  transition: transform 0.3s ease;
+}
+
+/* Gentle image scale effect on hover */
+.profile-pic-wrapper:hover .profile-avatar {
+  transform: scale(1.04);
+}
+
+/* Small floating camera action button positioned on the outer bottom-right corner */
+.camera-overlay {
+  position: absolute;
+  bottom: 0px;       /* Adjusted to stick perfectly on the right-bottom edge */
+  right: 0px;        
+  width: 38px;
+  height: 38px;
+  background: #07ff41a8; 
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.3);
+  z-index: 5;         
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Pop effect for the camera button during hover interaction */
+.profile-pic-wrapper:hover .camera-overlay {
+  transform: scale(1.12);
+  background: #e0a800; 
+}
+
+/* Icon sizing for camera emoji */
+.camera-icon-text {
+  font-size: 18px;
+  color: #ffffff;
+}

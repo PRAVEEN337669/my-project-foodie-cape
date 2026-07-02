@@ -1,0 +1,16 @@
+ # Backend Service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: backend-service   # service name
+
+spec:
+  selector:
+    app: backend
+
+  ports:
+  - port: 5000        # service port
+    targetPort: 5000  # container port
+
+  type: NodePort   # expose outside
