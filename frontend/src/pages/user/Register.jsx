@@ -1,9 +1,9 @@
 import { useState } from "react";
-import "./Register.css";
+import "./register.css";
 
 function Register() {
 
-  const backendURL = "https://foodie-cape.onrender.com";
+  const backendURL = "https://my-project-foodie-cape.onrender.com";
 
   const [user, setUser] = useState({
     name: "",
@@ -22,7 +22,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${backendURL}/api/register`, {
+      const res = await fetch(`${backendURL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,12 @@ function Register() {
       });
 
       const data = await res.json();
-      alert(data.message || "Registered Successfully!");
+
+      if (res.ok) {
+        alert("Registered Successfully!");
+      } else {
+        alert(data.message || "Registration Failed");
+      }
 
     } catch (err) {
       console.log(err);
@@ -47,6 +52,7 @@ function Register() {
         value={user.name}
         onChange={handleChange}
         placeholder="Name"
+        required
       />
 
       <input
@@ -55,6 +61,7 @@ function Register() {
         value={user.email}
         onChange={handleChange}
         placeholder="Email"
+        required
       />
 
       <input
@@ -63,6 +70,7 @@ function Register() {
         value={user.password}
         onChange={handleChange}
         placeholder="Password"
+        required
       />
 
       <button type="submit">Register</button>
