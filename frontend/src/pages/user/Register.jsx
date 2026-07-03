@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./register.css";
-
+import { useNavigate } from "react-router-dom";
 function Register() {
 
   const backendURL = "https://my-project-foodie-cape.onrender.com";
@@ -10,7 +10,14 @@ function Register() {
     email: "",
     password: "",
   });
+const navigate = useNavigate();
 
+<p>
+  Already have an account?{" "}
+  <span onClick={() => navigate("/login")}>
+    Login
+  </span>
+</p>
   const handleChange = (e) => {
     setUser({
       ...user,
