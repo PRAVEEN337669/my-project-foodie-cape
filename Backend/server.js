@@ -11,27 +11,24 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://my-project-foodie-cape.vercel.app"
+      "https://my-project-foodie-cape.vercel.app",
     ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-// MongoDB Connect
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB Connected Successfully");
-  } catch (err) {
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected Successfully"))
+  .catch((err) => {
     console.error("❌ MongoDB Connection Failed");
     console.error(err);
     process.exit(1);
-  }
-};
-
-connectDB();
+  });
 
 // Routes
 const foodRoute = require("./routes/foodRoutes");
@@ -42,7 +39,23 @@ app.use("/api/auth", authRoute);
 
 // Home Route
 app.get("/", (req, res) => {
-  res.send("API is running 🚀");
+  res.send("🚀 Foodie Cape Backend Running");
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route Not Found",
+  });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  res.status(500).json({
+    message: "Internal Server Error",
+  });
 });
 
 // Start Server
