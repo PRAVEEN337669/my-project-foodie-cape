@@ -10,7 +10,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://foodie-cape.vercel.app",
+      "http://localhost:5174",
+      "https://my-project-foodie-cape.vercel.app"
     ],
     credentials: true,
   })
@@ -22,7 +23,6 @@ app.use(express.json());
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-
     console.log("✅ MongoDB Connected Successfully");
   } catch (err) {
     console.error("❌ MongoDB Connection Failed");
