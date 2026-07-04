@@ -1,87 +1,182 @@
 import { useState } from "react";
-import "./register.css";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-function Register() {
+import "./register.css";
 
+function Register() {
+  const navigate = useNavigate();
+
+  // ✅ Render Backend URL
   const backendURL = "https://my-project-foodie-cape.onrender.com";
 
   const [user, setUser] = useState({
     name: "",
     email: "",
     password: "",
+    role: "user",
+    adminCode: "",
   });
-const navigate = useNavigate();
 
-<p>
-  Already have an account?{" "}
-  <span onClick={() => navigate("/login")}>
-    Login
-  </span>
-</p>
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value,
-    });
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Admin Secret Code Validation
+    if (
+      user.role === "admin" &&
+      user.adminCode.toUpperCase() !== "FOODIE123"
+    ) {
+      return setError("Invalid Admin Secret Code!");
+    }
+
     try {
-      const res = await fetch(`${backendURL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
+      setLoading(true);
+      setError("");
 
-      const data = await res.json();
+      const response = await axios.post(
+        `${backendURL}/api/auth/register`,
+        {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+          role: user.role,
+        }
+      );
 
-      if (res.ok) {
-        alert("Registered Successfully!");
-      } else {
-        alert(data.message || "Registration Failed");
+      if (response.status === 201 || response.status === 200) {
+        alert("Registration Successful!");
+        navigate("/login");
       }
-
     } catch (err) {
-      console.log(err);
-      alert("Server Error");
+      setError(
+        err.response?.data?.message ||
+          err.response?.data ||
+          "Registration failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="name"
-        value={user.name}
-        onChange={handleChange}
-        placeholder="Name"
-        required
-      />
+    <div className="register-page">
+      <div className="register-container">
+        <h2>Create Account</h2>
 
-      <input
-        type="email"
-        name="email"
-        value={user.email}
-        onChange={handleChange}
-        placeholder="Email"
-        required
-      />
+        {error && (
+          <div
+            className="error-msg"
+            style={{
+              color: "#ff8a8a",
+              textAlign: "center",
+              marginBottom: "10px",
+            }}
+          >
+            {error}
+          </div>
+        )}
 
-      <input
-        type="password"
-        name="password"
-        value={user.password}
-        onChange={handleChange}
-        placeholder="Password"
-        required
-      />
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              value={user.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-      <button type="submit">Register</button>
-    </form>
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={user.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Register as</label>
+            <select
+              name="role"
+              value={user.role}
+              onChange={handleChange}
+              className="role-select"
+            >
+              <option value="user">User / Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          {user.role === "admin" && (
+            <div className="input-group">
+              <label>Admin Secret Code</label>
+              <input
+                type="text"
+                name="adminCode"
+                placeholder="Enter secret code"
+                value={user.adminCode}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          )}
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              value={user.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button
+            className="register-btn"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Register"}
+          </button>
+        </form>
+
+        <p
+          className="login-link"
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontSize: "14px",
+          }}
+        >
+          Already have an account?{" "}
+          <span
+            style={{
+              color: "#4ed9f7",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
+      </div>
+    </div>
   );
 }
 
