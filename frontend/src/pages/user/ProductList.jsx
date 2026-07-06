@@ -7,34 +7,46 @@ import logo from "../../assets/foodie cape logo.png";
 
 function ProductList() {
   const navigate = useNavigate();
+  const { addToCart, cart } = useContext(CartContext);
+
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { addToCart, cart } = useContext(CartContext);
   const [userRatings, setUserRatings] = useState({});
   const [flyingItem, setFlyingItem] = useState(null);
 
-  // ✅ Backend URL from .env
-  const backendURL = import.meta.env.VITE_API_URL;
+  const backendURL =
+    import.meta.env.VITE_API_URL ||
+    "https://my-project-foodie-cape.onrender.com";
 
-  // FETCH PRODUCTS
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get(`${backendURL}/api/food`);
-        setProducts(res.data);
-      } catch (err) {
-        console.error("Error fetching products", err);
-      }
-    };
-
     fetchProducts();
   }, []);
 
-  const handleRating = (productId, rate) => {
-    setUserRatings({ ...userRatings, [productId]: rate });
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${backendURL}/api/food`);
+
+      console.log("Products API:", res.data);
+
+      if (Array.isArray(res.data)) {
+        setProducts(res.data);
+      } else {
+        console.error("Invalid Product Response", res.data);
+        setProducts([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setProducts([]);
+    }
   };
 
-  // Fly animation
+  const handleRating = (id, rating) => {
+    setUserRatings((prev) => ({
+      ...prev,
+      [id]: rating,
+    }));
+  };
+
   const triggerFlyAnimation = (e, product) => {
     const btn = e.target.getBoundingClientRect();
 
@@ -44,25 +56,28 @@ function ProductList() {
           ? product.image
           : `${backendURL}/uploads/${product.image || "default.jpg"}`,
       top: btn.top,
-      left: btn.left
+      left: btn.left,
     });
 
     addToCart(product);
 
-    setTimeout(() => setFlyingItem(null), 900);
+    setTimeout(() => {
+      setFlyingItem(null);
+    }, 900);
   };
 
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((item) =>
+        item?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
     <div className="product-list-page">
 
-      {/* NAVBAR */}
       <nav className="custom-navbar">
         <div className="nav-logo">
-          <img src={logo} alt="Foodie Cape" className="brand-logo" />
+          <img src={logo} alt="logo" className="brand-logo" />
           <span className="brand-name">
             Foodie <span>Cape</span>
           </span>
@@ -71,8 +86,9 @@ function ProductList() {
         <div className="search-box">
           <input
             type="text"
-            placeholder="Search delicious food..."
+            placeholder="Search Food..."
             className="search-input"
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -89,120 +105,120 @@ function ProductList() {
           <div
             className="profile-nav-item"
             onClick={() => navigate("/profile")}
-            style={{
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center"
-            }}
+            style={{ cursor: "pointer" }}
           >
-            <div
-              className="user-profile-circle"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                border: "2px solid #fff",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#eee"
-              }}
-            >
-              <span style={{ fontSize: "20px" }}>👤</span>
-            </div>
+            👤
           </div>
 
           <div
             className="cart-icon-wrapper"
             onClick={() => navigate("/cart")}
           >
-            <span className="cart-icon">🛒</span>
+            🛒
             <span className="badge">{cart.length}</span>
           </div>
 
         </div>
       </nav>
 
-      {/* Fly Animation */}
       {flyingItem && (
         <img
           src={flyingItem.image}
-          alt="Flying Food"
+          alt="food"
           style={{
             position: "fixed",
-            zIndex: 1000,
+            top: flyingItem.top,
+            left: flyingItem.left,
             width: "50px",
             height: "50px",
             borderRadius: "50%",
-            pointerEvents: "none",
-            top: flyingItem.top,
-            left: flyingItem.left
+            zIndex: 999,
           }}
         />
       )}
 
-      {/* CONTENT */}
       <div className="content-container">
 
         <h2 className="menu-header">
-          𝕆𝕦𝕣 𝔻𝕖𝕝𝕚𝕔𝕚𝕠𝕦𝕤 𝕄𝕖𝕟𝕦
+          Our Delicious Menu
         </h2>
 
         <div className="product-grid">
-          {filteredProducts.map((p) => (
-            <div key={p._id} className="food-card-modern">
 
-              <div className="img-wrapper">
-                <img
-                  src={
-                    p.image && p.image.startsWith("http")
-                      ? p.image
-                      : `${backendURL}/uploads/${p.image || "default.jpg"}`
-                  }
-                  alt={p.name}
-                />
-              </div>
+          {filteredProducts.length > 0 ? (
 
-              <div className="card-details">
+            filteredProducts.map((p) => (
+              <div className="food-card-modern" key={p._id}>
 
-                <h5 className="item-title">{p.name}</h5>
+                <div className="img-wrapper">
+                  <img
+                    src={
+                      p.image?.startsWith("http")
+                        ? p.image
+                        : `${backendURL}/uploads/${p.image || "default.jpg"}`
+                    }
+                    alt={p.name}
+                  />
+                </div>
 
-                <div className="star-rating">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span
-                      key={star}
-                      onClick={() => handleRating(p._id, star)}
-                      style={{
-                        cursor: "pointer",
-                        color:
-                          star <= (userRatings[p._id] || 0)
-                            ? "#ffc107"
-                            : "#e4e5e9"
-                      }}
-                    >
-                      ★
+                <div className="card-details">
+
+                  <h5>{p.name}</h5>
+
+                  <p>{p.description}</p>
+
+                  <div className="star-rating">
+                    {[1,2,3,4,5].map((star)=>(
+                      <span
+                        key={star}
+                        onClick={()=>handleRating(p._id,star)}
+                        style={{
+                          cursor:"pointer",
+                          color:
+                            star <= (userRatings[p._id] || 0)
+                              ? "#ffc107"
+                              : "#ddd",
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="card-footer">
+
+                    <span className="item-price">
+                      ₹{p.price}
                     </span>
-                  ))}
-                </div>
 
-                <div className="card-footer">
-                  <span className="item-price">
-                    ₹{p.price}
-                  </span>
+                    <button
+                      className="green-add-btn"
+                      onClick={(e)=>triggerFlyAnimation(e,p)}
+                    >
+                      Add to Cart
+                    </button>
 
-                  <button
-                    className="green-add-btn"
-                    onClick={(e) => triggerFlyAnimation(e, p)}
-                  >
-                    Add to Cart
-                  </button>
+                  </div>
+
                 </div>
 
               </div>
+            ))
 
-            </div>
-          ))}
+          ) : (
+
+            <h3
+              style={{
+                textAlign:"center",
+                width:"100%",
+                color:"#fff",
+              }}
+            >
+              No Products Available
+            </h3>
+
+          )}
+
         </div>
 
       </div>
@@ -212,3 +228,4 @@ function ProductList() {
 }
 
 export default ProductList;
+```
