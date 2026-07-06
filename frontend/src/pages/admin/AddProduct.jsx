@@ -6,7 +6,6 @@ import "../admin/food.css";
 function AddProduct() {
   const navigate = useNavigate();
 
-  // Backend URL
   const backendURL =
     import.meta.env.VITE_API_URL ||
     "https://my-project-foodie-cape.onrender.com";
@@ -21,22 +20,23 @@ function AddProduct() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setProduct({
-      ...product,
-      [e.target.name]:
-        e.target.name === "price"
-          ? Number(e.target.value)
-          : e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setProduct((prev) => ({
+      ...prev,
+      [name]: name === "price" ? Number(value) : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      const res = await axios.post(
+    try {
+      console.log("Sending:", product);
+
+      const response = await axios.post(
         `${backendURL}/api/food/add`,
         product,
         {
@@ -46,7 +46,9 @@ function AddProduct() {
         }
       );
 
-      alert(res.data.message || "✅ Product Added Successfully");
+      console.log("Response:", response.data);
+
+      alert("✅ Product Added Successfully");
 
       setProduct({
         name: "",
@@ -58,13 +60,22 @@ function AddProduct() {
       navigate("/user/productList");
 
     } catch (err) {
-      console.error(err);
+      console.error("AXIOS ERROR:", err);
 
-      alert(
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "❌ Failed to Add Product"
-      );
+      if (err.response) {
+        console.error("Status:", err.response.status);
+        console.error("Data:", err.response.data);
+
+        alert(
+          err.response.data.message ||
+          err.response.data.error ||
+          JSON.stringify(err.response.data)
+        );
+      } else if (err.request) {
+        alert("Backend server is not responding.");
+      } else {
+        alert(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -84,8 +95,8 @@ function AddProduct() {
               type="text"
               name="name"
               value={product.name}
-              placeholder="Enter product name"
               onChange={handleChange}
+              placeholder="Enter product name"
               required
             />
           </div>
@@ -96,8 +107,8 @@ function AddProduct() {
               type="number"
               name="price"
               value={product.price}
-              placeholder="Enter price"
               onChange={handleChange}
+              placeholder="Enter price"
               required
             />
           </div>
@@ -107,8 +118,8 @@ function AddProduct() {
             <textarea
               name="description"
               value={product.description}
-              placeholder="Enter product description"
               onChange={handleChange}
+              placeholder="Enter product description"
               required
             />
           </div>
@@ -119,8 +130,8 @@ function AddProduct() {
               type="text"
               name="image"
               value={product.image}
-              placeholder="Paste image URL here"
               onChange={handleChange}
+              placeholder="Paste image URL"
               required
             />
           </div>
