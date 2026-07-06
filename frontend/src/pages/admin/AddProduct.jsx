@@ -6,8 +6,10 @@ import "../admin/food.css";
 function AddProduct() {
   const navigate = useNavigate();
 
-  // ✅ Backend URL from .env
-  const backendURL = import.meta.env.VITE_API_URL;
+  // Backend URL
+  const backendURL =
+    import.meta.env.VITE_API_URL ||
+    "https://my-project-foodie-cape.onrender.com";
 
   const [product, setProduct] = useState({
     name: "",
@@ -16,21 +18,55 @@ function AddProduct() {
     image: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setProduct({
+      ...product,
+      [e.target.name]:
+        e.target.name === "price"
+          ? Number(e.target.value)
+          : e.target.value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post(
+      setLoading(true);
+
+      const res = await axios.post(
         `${backendURL}/api/food/add`,
-        product
+        product,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      alert("Product Added Successfully ✅");
+      alert(res.data.message || "✅ Product Added Successfully");
+
+      setProduct({
+        name: "",
+        price: "",
+        description: "",
+        image: "",
+      });
+
       navigate("/user/productList");
 
     } catch (err) {
       console.error(err);
-      alert("Failed to Add Product ❌");
+
+      alert(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "❌ Failed to Add Product"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,10 +82,10 @@ function AddProduct() {
             <label>Product Name</label>
             <input
               type="text"
+              name="name"
+              value={product.name}
               placeholder="Enter product name"
-              onChange={(e) =>
-                setProduct({ ...product, name: e.target.value })
-              }
+              onChange={handleChange}
               required
             />
           </div>
@@ -58,10 +94,10 @@ function AddProduct() {
             <label>Price</label>
             <input
               type="number"
+              name="price"
+              value={product.price}
               placeholder="Enter price"
-              onChange={(e) =>
-                setProduct({ ...product, price: Number(e.target.value) })
-              }
+              onChange={handleChange}
               required
             />
           </div>
@@ -69,10 +105,10 @@ function AddProduct() {
           <div className="form-group">
             <label>Description</label>
             <textarea
+              name="description"
+              value={product.description}
               placeholder="Enter product description"
-              onChange={(e) =>
-                setProduct({ ...product, description: e.target.value })
-              }
+              onChange={handleChange}
               required
             />
           </div>
@@ -81,19 +117,24 @@ function AddProduct() {
             <label>Image URL</label>
             <input
               type="text"
+              name="image"
+              value={product.image}
               placeholder="Paste image URL here"
-              onChange={(e) =>
-                setProduct({ ...product, image: e.target.value })
-              }
+              onChange={handleChange}
               required
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Save Product
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Product"}
           </button>
 
         </form>
+
       </div>
     </div>
   );
