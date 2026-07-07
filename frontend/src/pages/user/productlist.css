@@ -215,38 +215,102 @@
     margin: 5px 0;
   }
 }
-/* Fly to Cart Animation */
-.fly-item-animation {
-  position: fixed;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  z-index: 9999;
-  pointer-events: none;
-  /* Animating to the top right cart icon */
-  animation: flyToCart 0.9s cubic-bezier(0.1, 0.25, 0.1, 1) forwards;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+/* ===============================
+   SWIGGY FLY TO CART ANIMATION
+================================ */
+
+.flying-food{
+    position:fixed;
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:99999;
+
+    animation:flyToCart .9s cubic-bezier(.22,.61,.36,1) forwards;
 }
 
-@keyframes flyToCart {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-  100% {
-    /* Coordinates for typical top-right cart position */
-    top: 20px; 
-    left: 85%; 
-    transform: scale(0.1);
-    opacity: 0;
-  }
+@keyframes flyToCart{
+
+0%{
+transform:translate(0,0) scale(1);
+opacity:1;
 }
 
+20%{
+transform:
+translate(
+calc(var(--end-x)*.2),
+calc(var(--end-y)*.2 - 80px)
+)
+scale(.95);
+}
+
+40%{
+transform:
+translate(
+calc(var(--end-x)*.4),
+calc(var(--end-y)*.4 - 120px)
+)
+scale(.8);
+}
+
+60%{
+transform:
+translate(
+calc(var(--end-x)*.6),
+calc(var(--end-y)*.6 - 90px)
+)
+scale(.6);
+}
+
+80%{
+transform:
+translate(
+calc(var(--end-x)*.8),
+calc(var(--end-y)*.8 - 40px)
+)
+scale(.35);
+}
+
+100%{
+transform:
+translate(
+var(--end-x),
+var(--end-y)
+)
+scale(.15);
+opacity:0;
+}
+
+}
+
+.cart-bounce{
+animation:cartBounce .45s ease;
+}
+
+@keyframes cartBounce{
+
+0%{transform:scale(1);}
+30%{transform:scale(1.25);}
+60%{transform:scale(.9);}
+100%{transform:scale(1);}
+
+}
+
+.badge-pop{
+animation:badgePop .45s ease;
+}
+
+@keyframes badgePop{
+
+0%{transform:scale(1);}
+40%{transform:scale(1.45);}
+100%{transform:scale(1);}
+
+}
 /* Optional: Make cart bounce when item arrives */
 #cart-target {
   transition: transform 0.2s;
