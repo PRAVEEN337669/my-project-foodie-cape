@@ -12,6 +12,9 @@ import logo from "../../assets/foodie cape logo.png";
 
 function ProductList() {
   const navigate = useNavigate();
+
+  const { addToCart, cart } = useContext(CartContext);
+
   const cartRef = useRef(null);
 
   const [products, setProducts] = useState([]);
