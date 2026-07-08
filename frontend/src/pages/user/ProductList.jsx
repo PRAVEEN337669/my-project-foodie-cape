@@ -91,12 +91,13 @@ const triggerFlyAnimation = (e, product) => {
   setTimeout(() => {
     setFlyingItem(null);
   }, 900);
+ 
+};
 const filteredProducts = Array.isArray(products)
   ? products.filter((item) =>
       item?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
   : [];
-};
   return (
     <div className="product-list-page">
 
