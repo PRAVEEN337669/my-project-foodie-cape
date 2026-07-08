@@ -12,12 +12,12 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://my-project-foodie-cape.vercel.app",
+      "https://my-project-foodie-cape-te68.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
-
 app.use(express.json());
 
 // MongoDB Connection
