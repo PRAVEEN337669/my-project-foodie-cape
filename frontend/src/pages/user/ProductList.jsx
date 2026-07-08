@@ -2,22 +2,16 @@ import React, {
   useEffect,
   useState,
   useContext,
-  useRef
+  useRef,
 } from "react";
-
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
-
 import "../user/productlist.css";
 import logo from "../../assets/foodie cape logo.png";
 
 function ProductList() {
-
   const navigate = useNavigate();
-
-  const { addToCart, cart } = useContext(CartContext);
-
   const cartRef = useRef(null);
 
   const [products, setProducts] = useState([]);
@@ -35,278 +29,218 @@ function ProductList() {
 
   const fetchProducts = async () => {
     try {
+      const res = await axios.get(`${backendURL}/api/food`);
 
-      const res = await axios.get(
-        `${backendURL}/api/food`
-      );
+      console.log("Products API:", res.data);
 
       if (Array.isArray(res.data)) {
         setProducts(res.data);
       } else {
+        console.error("Invalid Product Response", res.data);
         setProducts([]);
       }
-
     } catch (err) {
-
       console.error(err);
       setProducts([]);
-
     }
   };
 
   const handleRating = (id, rating) => {
-
     setUserRatings((prev) => ({
       ...prev,
       [id]: rating,
     }));
-
   };
 
-  // ------------------------------
-  // Swiggy Style Flying Animation
-  // ------------------------------
+  
+const triggerFlyAnimation = (e, product) => {
 
-  const triggerFlyAnimation = (e, product) => {
+  if (!cartRef.current) {
+    addToCart(product);
+    return;
+  }
 
-    const start = e.currentTarget.getBoundingClientRect();
+  const startRect = e.currentTarget.getBoundingClientRect();
+  const cartRect = cartRef.current.getBoundingClientRect();
 
-    if (!cartRef.current) return;
+  const image =
+    product.image?.startsWith("http")
+      ? product.image
+      : `${backendURL}/uploads/${product.image || "default.jpg"}`;
 
-const cart = cartRef.current.getBoundingClientRect();
+  setFlyingItem({
+    image,
+    top: startRect.top,
+    left: startRect.left,
 
-    const image =
-      product.image &&
-      product.image.startsWith("http")
-        ? product.image
-        : `${backendURL}/uploads/${product.image || "default.jpg"}`;
+    endX: cartRect.left - startRect.left,
+    endY: cartRect.top - startRect.top,
+  });
 
-    setFlyingItem({
+  addToCart(product);
 
-      image,
+  cartRef.current.classList.add("cart-bounce");
 
-      startX: start.left,
+  setTimeout(() => {
+    cartRef.current?.classList.remove("cart-bounce");
+  }, 450);
 
-      startY: start.top,
-
-      endX: cart.left,
-
-      endY: cart.top,
-
-    });
-
-   addToCart(product);
-
-cartRef.current.classList.add("cart-bounce");
-
-setTimeout(() => {
-
-    cartRef.current.classList.remove("cart-bounce");
-
-},450);
-
-setTimeout(() => {
-
+  setTimeout(() => {
     setFlyingItem(null);
+  }, 900);
 
-},1000);
-  };
-
-  const filteredProducts = products.filter((item) =>
-    item.name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+};
   return (
-  <div className="product-list-page">
+    <div className="product-list-page">
 
-    {/* NAVBAR */}
-    <nav className="custom-navbar">
-
-      <div className="nav-logo">
-        <img
-          src={logo}
-          alt="Foodie Cape"
-          className="brand-logo"
-        />
-
-        <span className="brand-name">
-          Foodie <span>Cape</span>
-        </span>
-      </div>
-
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search delicious food..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) =>
-            setSearchTerm(e.target.value)
-          }
-        />
-      </div>
-
-      <div className="nav-links">
-
-        <span
-          className="link-item"
-          onClick={() => navigate("/")}
-        >
-          Home
-        </span>
-
-        <div
-          className="profile-nav-item"
-          onClick={() => navigate("/profile")}
-        >
-          👤
+      <nav className="custom-navbar">
+        <div className="nav-logo">
+          <img src={logo} alt="logo" className="brand-logo" />
+          <span className="brand-name">
+            Foodie <span>Cape</span>
+          </span>
         </div>
 
-        <div
-          ref={cartRef}
-          className={`cart-icon-wrapper ${
-            flyingItem ? "cart-bounce" : ""
-          }`}
-          onClick={() => navigate("/cart")}
-        >
-          🛒
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search Food..."
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="nav-links">
 
           <span
-className={`badge ${
-flyingItem ? "badge-pop" : ""
-}`}
-key={cart.length}
->
-            {cart.length}
+            className="link-item"
+            onClick={() => navigate("/")}
+          >
+            Home
           </span>
 
+          <div
+            className="profile-nav-item"
+            onClick={() => navigate("/profile")}
+            style={{ cursor: "pointer" }}
+          >
+            👤
+          </div>
+
+         <div
+  ref={cartRef}
+  className="cart-icon-wrapper"
+  onClick={() => navigate("/cart")}
+>
+            🛒
+            <span className="badge">{cart.length}</span>
+          </div>
+
         </div>
+      </nav>
+{flyingItem && (
+  <img
+    src={flyingItem.image}
+    alt="Flying Food"
+    className="flying-food"
+    style={{
+      top: flyingItem.top,
+      left: flyingItem.left,
+      "--end-x": `${flyingItem.endX}px`,
+      "--end-y": `${flyingItem.endY}px`,
+    }}
+  />
+)}
 
-      </div>
+      <div className="content-container">
 
-    </nav>
+        <h2 className="menu-header">
+          Our Delicious Menu
+        </h2>
 
-    {/* Flying Image */}
+        <div className="product-grid">
 
-    {flyingItem && (
+          {filteredProducts.length > 0 ? (
 
-      <img
-        src={flyingItem.image}
-        alt="Flying Food"
-        className="flying-food"
-        style={{
-          left: flyingItem.startX,
-          top: flyingItem.startY,
+            filteredProducts.map((p) => (
+              <div className="food-card-modern" key={p._id}>
 
-          "--end-x": `${flyingItem.endX - flyingItem.startX}px`,
-          "--end-y": `${flyingItem.endY - flyingItem.startY}px`,
-        }}
-      />
+                <div className="img-wrapper">
+                  <img
+                    src={
+                      p.image?.startsWith("http")
+                        ? p.image
+                        : `${backendURL}/uploads/${p.image || "default.jpg"}`
+                    }
+                    alt={p.name}
+                  />
+                </div>
 
-    )}
+                <div className="card-details">
 
-    <div className="content-container">
+                  <h5>{p.name}</h5>
 
-      <h2 className="menu-header">
-        Our Delicious Menu
-      </h2>
+                  <p>{p.description}</p>
 
-      <div className="product-grid">
+                  <div className="star-rating">
+                    {[1,2,3,4,5].map((star)=>(
+                      <span
+                        key={star}
+                        onClick={()=>handleRating(p._id,star)}
+                        style={{
+                          cursor:"pointer",
+                          color:
+                            star <= (userRatings[p._id] || 0)
+                              ? "#ffc107"
+                              : "#ddd",
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
 
-        {filteredProducts.length > 0 ? (
+                  <div className="card-footer">
 
-          filteredProducts.map((p) => (
-
-            <div
-              className="food-card-modern"
-              key={p._id}
-            >
-
-              <div className="img-wrapper">
-<img
-src={
-p.image?.startsWith("http")
-? p.image
-: `${backendURL}/uploads/${p.image || "default.jpg"}`
-}
-              </div>
-
-              <div className="card-details">
-
-                <h5>{p.name}</h5>
-
-                <p>{p.description}</p>
-
-                <div className="star-rating">
-
-                  {[1,2,3,4,5].map((star)=>(
-
-                    <span
-                      key={star}
-                      onClick={() =>
-                        handleRating(p._id,star)
-                      }
-                      style={{
-                        cursor:"pointer",
-                        color:
-                          star <=
-                          (userRatings[p._id]||0)
-                            ? "#ffc107"
-                            : "#ddd"
-                      }}
-                    >
-                      ★
+                    <span className="item-price">
+                      ₹{p.price}
                     </span>
 
-                  ))}
+                    <button
+                      className="green-add-btn"
+                      onClick={(e)=>triggerFlyAnimation(e,p)}
+                    >
+                      Add to Cart
+                    </button>
 
-                </div>
-
-                <div className="card-footer">
-
-                  <span className="item-price">
-                    ₹{p.price}
-                  </span>
-
-                  <button
-                    className="green-add-btn"
-                    onClick={(e)=>
-                      triggerFlyAnimation(e,p)
-                    }
-                  >
-                    Add to Cart
-                  </button>
+                  </div>
 
                 </div>
 
               </div>
+            ))
 
-            </div>
+          ) : (
 
-          ))
+            <h3
+              style={{
+                textAlign:"center",
+                width:"100%",
+                color:"#fff",
+              }}
+            >
+              No Products Available
+            </h3>
 
-        ) : (
+          )}
 
-          <h2
-            style={{
-              color:"white",
-              textAlign:"center",
-              width:"100%"
-            }}
-          >
-            No Products Available
-          </h2>
-
-        )}
+        </div>
 
       </div>
 
     </div>
-
-  </div>
-);
-
+  );
 }
 
-export default ProductList;
+export default ProductList; 
